@@ -50,5 +50,19 @@ class AbrigoAnimais {
     return true;
   }
   
+  verificaSequenciaCorreta(brinquedosPessoa, brinquedosAnimal) {
+    // ponteiro de controle
+    let ponteiroBrinquedoAnimal = 0;
+    
+    for (const brinquedo of brinquedosPessoa) {
+      // Verifica se o brinquedo da pessoa é o mesmo que o animal pede, em ordem
+      if (brinquedo === brinquedosAnimal[ponteiroBrinquedoAnimal]) {
+        // avança para o proximo brinquedo do animal
+        ponteiroBrinquedoAnimal++;
+      }
+    }
+    // true caso o ponteiro for igual ao numero de brinquedos do animal, entao encontramos todos em ordem
+    return ponteiroBrinquedoAnimal === brinquedosAnimal.length;
+  }
 }
 export { AbrigoAnimais as AbrigoAnimais };
