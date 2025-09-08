@@ -16,4 +16,39 @@ class AbrigoAnimais {
     if (!texto) return [];
     return texto.split(",").map(texto => texto.trim());
   }
+  
+  validaEntradas(brinquedosP1, brinquedosP2, animais) {
+    const brinquedosValidos = new Set(Object.values(this.animais).flatMap(animal => animal.brinquedos));
+
+    const verificarBrinquedos = (listaBrinquedos) => {
+      // Valida se existe brinquedos inexistentes
+      for (const brinquedoP of listaBrinquedos) {
+        if (!brinquedosValidos.has(brinquedoP)) {
+          throw new Error("Brinquedo inválido");
+        }
+      }
+      // Valida se a lista possui brinquedos duplicados
+      if (new Set(listaBrinquedos).size !== listaBrinquedos.length){
+        throw new Error("Brinquedo inválido");
+      }
+    }
+    
+    verificarBrinquedos(brinquedosP1);
+    verificarBrinquedos(brinquedosP2);
+    
+    // Valida se existe animais inexistentes
+    for (const animal of animais) {
+      if (!(this.animais[animal])) {
+        throw new Error("Animal inválido");
+      }
+    }
+    // Valida se existe animais duplicados
+    if (new Set(animais).size !== animais.length) {
+      throw new Error("Animal inválido");
+    }
+
+    return true;
+  }
+  
+}
 export { AbrigoAnimais as AbrigoAnimais };
