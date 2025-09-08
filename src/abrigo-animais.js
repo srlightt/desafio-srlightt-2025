@@ -10,6 +10,61 @@ class AbrigoAnimais {
   }
 
   encontraPessoas(brinquedosPessoa1, brinquedosPessoa2, ordemAnimais) {
+    const listaBrinquedosPessoa1 = this.converteStringEmLista(brinquedosPessoa1);
+    const listaBrinquedosPessoa2 = this.converteStringEmLista(brinquedosPessoa2);
+    const listaAnimais = this.converteStringEmLista(ordemAnimais);
+    
+    try {
+      this.validaEntradas(listaBrinquedosPessoa1, listaBrinquedosPessoa2, listaAnimais);
+    } catch (err) {
+      return { erro: err.message };
+    }
+
+    let adocoesPessoa1 = 0;
+    let adocoesPessoa2 = 0;
+    let resultadosFinais = [];
+
+    for (const animalNome of listaAnimais) {
+      const animalInfo = this.animais[animalNome];
+      
+      const pessoa1Apta = this.podeAdotarAnimal(listaBrinquedosPessoa1, animalInfo, adocoesPessoa1);
+      const pessoa2Apta = this.podeAdotarAnimal(listaBrinquedosPessoa2, animalInfo, adocoesPessoa2);
+      
+      if (pessoa1Apta && pessoa2Apta) {
+        resultadosFinais.push(`${animalNome} - abrigo`);
+      }
+      else if (pessoa1Apta) {
+        resultadosFinais.push(`${animalNome} - pessoa 1`);
+        adocoesPessoa1++;
+      }
+      else if (pessoa2Apta) {
+        resultadosFinais.push(`${animalNome} - pessoa 2`);
+        adocoesPessoa2++;
+      }
+      else {
+        resultadosFinais.push(`${animalNome} - abrigo`);
+      }
+    }
+    
+    resultadosFinais.sort();
+    return { lista: resultadosFinais };
+  }
+
+  podeAdotarAnimal(brinquedosPessoa, animalInfo, adocoesAtuais) {
+    // Limite de 3 adoções
+    if (adocoesAtuais >= 3) {
+      return false;
+    }
+
+    // Exceção do Loco (jabuti)
+    if (animalInfo.tipo === "jabuti") {
+      // Precisa ter adotado outro animal antes E ter todos os brinquedos, sem importar a ordem
+      const temTodosBrinquedos = animalInfo.brinquedos.every(brinquedo => brinquedosPessoa.includes(brinquedo));
+      return adocoesAtuais >= 1 && temTodosBrinquedos;
+    }
+
+    // Regra geral para TODOS os outros animais (cães E gatos)
+    return this.verificaSequenciaCorreta(brinquedosPessoa, animalInfo.brinquedos);
   }
 
   converteStringEmLista(texto) {
