@@ -79,4 +79,38 @@ describe('Abrigo de Animais', () => {
     expect(resultado.lista[1]).toBe('Rex - pessoa 1');
     expect(resultado.lista.length).toBe(2);
   });
+
+  test('Deve respeitar limite de 3 animais por pessoa', () => {
+    const resultado = new AbrigoAnimais().encontraPessoas(
+      'RATO,BOLA,LASER,CAIXA,SKATE', 
+      'NOVELO', 
+      'Rex,Bebe,Mimi,Zero,Loco');
+    
+    // Pessoa 1 pode adotar Rex, Bebe, Zero (3 animais) - Mimi e Loco ficam no abrigo
+    const pessoasComAnimais = resultado.lista.filter(item => item.includes('pessoa 1')).length;
+    expect(pessoasComAnimais).toBeLessThanOrEqual(3);
+    expect(resultado.erro).toBeFalsy();
+  });
+
+  test('Deve mandar animal para o abrigo em caso de empate claro', () => {
+    const resultado = new AbrigoAnimais().encontraPessoas(
+      'RATO,BOLA', 
+      'RATO,BOLA', 
+      'Rex'
+    );
+    // Ambas as pessoas são perfeitamente aptas para o Rex, resultando em um empate.
+    expect(resultado.lista[0]).toBe('Rex - abrigo');
+    expect(resultado.lista.length).toBe(1);
+  });
+
+  test('Deve retornar a lista de resultados em ordem alfabética', () => {
+    const resultado = new AbrigoAnimais().encontraPessoas(
+      'RATO,BOLA', 
+      '', 
+      'Zero,Rex' // 'Zero' vem antes de 'Rex' na entrada
+    );
+    // Pessoa 1 adota ambos, mas na saída 'Rex' deve vir antes de 'Zero'.
+    expect(resultado.lista[0]).toBe('Rex - pessoa 1');
+    expect(resultado.lista[1]).toBe('Zero - pessoa 1');
+  });
 });
